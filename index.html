@@ -1,0 +1,105 @@
+<head>
+  <meta charset="utf-8">
+  <script src="pixi.js"></script>
+  <style>* {padding: 0; margin: 0}</style>
+</head>
+<body>
+</body>
+<script type="text/javascript">
+  PIXI.utils.sayHello("WebGL");
+  let app = new PIXI.Application({width: 900, height: 600, antialias: true});
+  app.renderer.autoResize = true;
+  app.renderer.view.style.position = "absolute";
+  app.renderer.view.style.display = "block";
+  app.renderer.resize(window.innerWidth, window.innerHeight);
+  document.body.appendChild(app.view);
+
+  let x = 1044;
+  let y = 299;
+  let size = 80;
+
+  let ball = new PIXI.Container();
+  app.stage.addChild(ball);
+  let circleMask = new PIXI.Graphics();
+  circleMask.beginFill(0xffffff);
+  circleMask.drawCircle(x, y, size);
+  circleMask.endFill();
+  ball.mask = circleMask;
+
+  let textStyle = new PIXI.TextStyle({
+    fill: '#ffffff'
+  });
+  let widthText = new PIXI.Text("", textStyle);
+  widthText.x = x + size;
+  widthText.y = y + size;
+  // app.stage.addChild(widthText);
+
+  let explodo = new PIXI.Graphics();
+  ball.addChild(explodo);
+
+  // let explodoSize = 0;
+  // app.ticker.add(function(delta) {
+  //   explodoSize = (explodoSize + delta * .1) % (size * 2);
+
+  //   widthText.text = explodoSize;
+  //   explodo.clear();
+  //   explodo.beginFill(0xffffff);
+  //   explodo.drawCircle(x, y, Math.abs(explodoSize - size));
+  //   explodo.endFill();
+  // });
+
+  function wash() {
+    let bgRect = new PIXI.Graphics();
+    let rect = new PIXI.Graphics();
+    ball.addChild(bgRect);
+    ball.addChild(rect);
+
+    let width = 0;
+    let fillColor = 0;
+    let barWidth = 150;
+    let speed = 0.2;
+    app.ticker.add(function(delta) {
+
+      next_width = (width + delta * speed) % (size * 2 + barWidth);
+      if (next_width < width) {
+        fillColor = (fillColor + 1) % 4;
+      }
+      width = next_width;
+
+      let bgColor = (fillColor - 1) % 4;
+      bgRect.clear();
+      if (bgColor == 3) {
+        bgRect.beginFill(0xffffff);
+      } else {
+        bgRect.beginFill(0xff << (8 * bgColor));
+      }
+      bgRect.drawRect(x - size, y - size, size * 2, size * 2);
+      bgRect.endFill();
+
+      rect.clear();
+      if (fillColor == 3) {
+        rect.beginFill(0xffffff);
+      } else {
+        rect.beginFill(0xff << (8 * fillColor));
+      }
+      rect.drawRect(x-size + width - barWidth, y-size, barWidth, size * 2);
+      rect.endFill();
+      widthText.text = width;
+    });
+  }
+
+  wash()
+
+  // let blueCircle = new PIXI.Graphics();
+  // app.stage.addChild(blueCircle);
+  // let total = 0;
+  // app.ticker.add(function(delta) {
+  //   blueCircle.clear();
+  //   if (total < 8) {
+  //     blueCircle.beginFill(0x00ff00);
+  //     blueCircle.drawCircle(x, y, size);
+  //     blueCircle.endFill();
+  //   }
+  //   total = (total + 1) % 40;;
+  // });
+</script>
